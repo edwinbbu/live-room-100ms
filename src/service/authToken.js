@@ -16,10 +16,10 @@ async function postData(url = "", data = {}) {
   return response.json();
 }
 
-export const getAuthToken = async () => {
+export const generateAuthToken = async ({ role }) => {
   const data = await postData(TOKEN_ENDPOINT, {
     room_id: "63917412aee54625da65387f",
-    role: "host",
+    role: role,
   });
-  console.log(data);
+  return data;
 };

@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { useHMSActions } from "@100mslive/react-sdk";
+import { generateAuthToken } from "./service/authToken";
 
-const AUTH_TOKEN =
-  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2Nlc3Nfa2V5IjoiNjM5MTY1NTQxOTVhZDE0YmRjZDZmMGNlIiwicm9vbV9pZCI6IjYzOTE3NDEyYWVlNTQ2MjVkYTY1Mzg3ZiIsInVzZXJfaWQiOiIxMjM0Iiwicm9sZSI6Imhvc3QiLCJqdGkiOiJjOGZiOTNkMS1mZGYzLTQxYTYtOTQwZi03NDQ2ODQ2N2MxYmEiLCJ0eXBlIjoiYXBwIiwidmVyc2lvbiI6MiwiZXhwIjoxNjcxMjEwMzYwfQ.bfs5YWrQu30TZB5nBI-C62aBgNH-v8prpq4CX8lG21E";
+const ROLES = {
+  HOST: "host",
+  GUEST: "guest",
+};
 
 function JoinForm() {
   const hmsActions = useHMSActions();
   const [inputValues, setInputValues] = useState({
     name: "",
-    role: "",
+    role: ROLES.HOST,
   });
 
   const handleInputChange = (e) => {
@@ -20,10 +23,16 @@ function JoinForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await hmsActions.join({
-      userName: inputValues.name,
-      authToken: AUTH_TOKEN,
-    });
+    try {
+      const data = await generateAuthToken({ role: inputValues.role });
+      console.log("authToken", data.token);
+      await hmsActions.join({
+        userName: inputValues.name,
+        authToken: data.token,
+      });
+    } catch (err) {
+      console.error("Failed to join room", err);
+    }
   };
 
   return (
@@ -39,6 +48,19 @@ function JoinForm() {
           name="name"
           placeholder="Your name"
         />
+      </div>
+      <div className="input-container">
+        <select
+          required
+          value={inputValues.role}
+          onChange={handleInputChange}
+          id="role"
+          type="text"
+          name="role"
+        >
+          <option value="host">HOST</option>
+          <option value="guest">GUEST</option>
+        </select>
       </div>
       <button className="btn-primary">Join</button>
     </form>

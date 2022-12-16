@@ -4,6 +4,7 @@ import Peer from "./Peer";
 
 function Conference() {
   const peers = useHMSStore(selectPeers);
+  console.log("peers:", peers);
   return (
     <div className="conference-section">
       <h2>Conference</h2>
