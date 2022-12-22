@@ -1,6 +1,12 @@
 import { useVideo } from "@100mslive/react-sdk";
 
+const roles = {
+  host: "Host",
+  guest: "Guest",
+};
+
 function Peer({ peer }) {
+  console.log("peer:", peer);
   const { videoRef } = useVideo({
     trackId: peer.videoTrack,
   });
@@ -14,7 +20,7 @@ function Peer({ peer }) {
         playsInline
       />
       <div className="peer-name">
-        {peer.name} {peer.isLocal ? "(You)" : ""}
+        {peer.isLocal ? "You" : peer.name} ({roles[peer.roleName]})
       </div>
     </div>
   );
